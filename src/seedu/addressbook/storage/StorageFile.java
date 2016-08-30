@@ -80,21 +80,27 @@ public class StorageFile {
 
     /**
      * Saves all data to this storage file.
-     *
+     * @return if we had to (re)create the storage file during this operation
      * @throws StorageOperationException if there were errors converting and/or storing data to file.
      */
-    public void save(AddressBook addressBook) throws StorageOperationException {
+    public boolean save(AddressBook addressBook) throws StorageOperationException {
 
         /* Note: Note the 'try with resource' statement below.
          * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
          */
+        File fileToSaveTo = path.toFile();
+        boolean isFileCreated = !(fileToSaveTo.exists());
+                      
         try (final Writer fileWriter =
-                     new BufferedWriter(new FileWriter(path.toFile()))) {
+                     new BufferedWriter(new FileWriter(fileToSaveTo))) {
 
             final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
             final Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(toSave, fileWriter);
+            
+            // Indicate if we had to (re)create the file to perform this operation
+            return isFileCreated;
 
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);

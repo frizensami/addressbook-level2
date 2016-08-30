@@ -107,7 +107,13 @@ public class Main {
         try {
             command.setData(addressBook, lastShownList);
             CommandResult result = command.execute();
-            storage.save(addressBook);
+            
+            // Save the addressBook object onto disk and check if the storage file had to be (re)created
+            boolean isFileCreated = storage.save(addressBook);
+            if (isFileCreated) {
+                ui.showToUser("WARNING: Storage file (re)created during save operation.");
+            }
+            
             return result;
         } catch (Exception e) {
             ui.showToUser(e.getMessage());
