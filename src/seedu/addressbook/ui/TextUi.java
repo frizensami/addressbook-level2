@@ -1,9 +1,9 @@
 package seedu.addressbook.ui;
 
 import static seedu.addressbook.common.Messages.*;
-
 import seedu.addressbook.commands.CommandResult;
 import seedu.addressbook.common.Utils;
+import seedu.addressbook.data.person.Printable;
 import seedu.addressbook.data.person.ReadOnlyPerson;
 
 import java.io.InputStream;
@@ -127,6 +127,20 @@ public class TextUi {
             showPersonListView(resultPersons.get());
         }
         showToUser(result.feedbackToUser, DIVIDER);
+    }
+    
+    /**
+     * Converts a variable number of printable arguments into a comma-separated
+     * string.
+     * @param printables
+     * @return
+     */
+    public String getPrintableString(Printable... printables) {
+        StringBuilder returnString = new StringBuilder();
+        for (Printable printable : printables) {
+            returnString.append(printable.getPrintableString()).append(", ");
+        }
+        return returnString.toString();
     }
 
     /**
